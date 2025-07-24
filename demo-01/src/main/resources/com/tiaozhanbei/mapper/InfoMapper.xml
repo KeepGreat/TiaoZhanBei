@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tiaozhanbei.mapper.InfoMapper">
+
+<!--    int insertInfo(Info info);-->
+    <insert id="insertInfo">
+        INSERT INTO `info`(`image`, `image_type`, `patient_gender`, `patient_age`, `keyword`, `diagnosis`, `created_at`)
+        VALUES(#{image}, #{imageType}, #{patientGender}, #{patientAge}, #{keyword}, #{diagnosis}, #{createdAt})
+    </insert>
+
+<!--    int deleteInfo(Info info);-->
+    <delete id="deleteInfo">
+        DELETE FROM `info`
+        <where>
+            <if test="patientGender != null">
+                patient_gender = #{patientGender}
+            </if>
+            <if test="patientAge != null">
+                AND patient_age = #{patientAge}
+            </if>
+            <if test="keyword != null">
+                AND keyword LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="diagnosis != null">
+                AND diagnosis LIKE CONCAT('%', #{diagnosis}, '%')
+            </if>
+            <if test="createdAt != null">
+                AND created_at = #{createdAt}
+            </if>
+        </where>
+    </delete>
+
+<!--    List<Info> selectInfo(Info info);-->
+    <select id="selectInfo" resultType="info">
+        SELECT * FROM `info`
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="patientGender != null">
+                patient_gender = #{patientGender}
+            </if>
+            <if test="patientAge != null">
+                AND patient_age = #{patientAge}
+            </if>
+            <if test="keyword != null">
+                AND keyword LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="diagnosis != null">
+                AND diagnosis LIKE CONCAT('%', #{diagnosis}, '%')
+            </if>
+            <if test="createdAt != null">
+                AND created_at = #{createdAt}
+            </if>
+        </where>
+    </select>
+
+<!--    int updateInfo(Info info);-->
+    <update id="updateInfo">
+        UPDATE `info`
+        <set>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="patientGender != null">
+                patient_gender = #{patientGender},
+            </if>
+            <if test="patientAge != null">
+                patient_age = #{patientAge},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword},
+            </if>
+            <if test="diagnosis != null">
+                diagnosis = #{diagnosis},
+            </if>
+        </set>
+    </update>
+
+</mapper>
