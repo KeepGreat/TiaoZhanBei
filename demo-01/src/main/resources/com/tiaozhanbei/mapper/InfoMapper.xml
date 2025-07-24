@@ -7,8 +7,8 @@
 
 <!--    int insertInfo(Info info);-->
     <insert id="insertInfo">
-        INSERT INTO `info`(`image`, `image_type`, `patient_gender`, `patient_age`, `keyword`, `diagnosis`, `created_at`)
-        VALUES(#{image}, #{imageType}, #{patientGender}, #{patientAge}, #{keyword}, #{diagnosis}, #{createdAt})
+        INSERT INTO `info`(`image1`, `image1_type`, `image2`, `image2_type`, `patient_gender`, `patient_age`, `keyword`, `diagnosis`, `created_at`)
+        VALUES(#{image1}, #{image1Type}, #{image2}, #{image2Type}, #{patientGender}, #{patientAge}, #{keyword}, #{diagnosis}, #{createdAt})
     </insert>
 
 <!--    int deleteInfo(Info info);-->

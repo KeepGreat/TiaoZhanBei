@@ -11,8 +11,10 @@ public class Info {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private byte[] image;
-    private String imageType;
+    private byte[] image1;
+    private String image1Type;
+    private byte[] image2;
+    private String image2Type;
     private String patientGender;
     private Short patientAge;
     private String keyword;
