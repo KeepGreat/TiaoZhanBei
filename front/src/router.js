@@ -1,19 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Login from './Login.vue'
+import Wrapper from './components/wrapper.vue'
+import History from './components/history.vue'
 
 const routes = [
-  {
-    path: '/',
-    component: () => import('./Login.vue')
-  },
+  { path: '/', component: Login },
   {
     path: '/wrapper',
-    component: () => import('./components/wrapper.vue')
+    component: Wrapper,
+    children: [
+      { path: 'history', component: History }
+    ]
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn')
+  if (to.path !== '/' && !isLoggedIn) {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

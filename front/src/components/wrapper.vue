@@ -21,9 +21,9 @@
                 <el-icon><location /></el-icon>
                 <span>一</span>
               </el-menu-item>
-              <el-menu-item index="">
+              <el-menu-item index="/wrapper/history">
                 <el-icon><location /></el-icon>
-                <span>二</span>
+                <span>历史记录</span>
               </el-menu-item>
               <el-menu-item index="">
                 <el-icon><location /></el-icon>
@@ -94,6 +94,14 @@
   </script>
   
   <style scoped>
+.wrapper,
+header,
+.container {
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
   .el-icon--right {
   margin-left: 0%;
   width: var(--el-menu-icon-width);
@@ -117,8 +125,8 @@
   width: 80%;
   height: 100%;
   background-color: #fff;
-  justify-content: center;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
   transition: width 0.3s ease-in-out;
 }
 .title {
@@ -139,13 +147,18 @@
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 20px;
+  flex-shrink: 0;
 }
 .welcome-title {
   width: 80%;
   text-align: center;
 }
 .show {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
+  flex-direction: column;
 }
 header {
   height: 100vh;
