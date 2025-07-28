@@ -19,5 +19,6 @@ public class Info {
     private Short patientAge;
     private String keyword;
     private String diagnosis;
+    //格式：yyyy-mm-ddThh:mm:ss
     private LocalDateTime createdAt;
 }

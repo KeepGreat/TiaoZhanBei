@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootTest
 public class MyBatisPlusTest {
@@ -60,5 +60,15 @@ public class MyBatisPlusTest {
 //            Info info1 = infoMapper.selectById(1);
 //            System.out.println("Image size: " + info1.getImage1().length);
 //        }
+    }
+
+    @Test
+    public void test02(){
+        Info info = new Info();
+//        info.setCreatedAt(LocalDateTime.parse("2025-07-24T14:21:54"));
+        info.setCreatedAt(LocalDateTime.of(2025, 7, 24, 14, 21, 54));
+        System.out.println(info.getCreatedAt());
+        List<Info> infos = infoMapper.selectInfo(info);
+        System.out.println(infos);
     }
 }

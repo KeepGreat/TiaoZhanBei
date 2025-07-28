@@ -58,12 +58,26 @@
         </where>
     </select>
 
+<!--    List<Info> selectAll();-->
+    <select id="selectAll" resultType="info">
+        SELECT * FROM `info`;
+    </select>
+
 <!--    int updateInfo(Info info);-->
     <update id="updateInfo">
         UPDATE `info`
         <set>
-            <if test="image != null">
-                image = #{image},
+            <if test="image1 != null">
+                image1 = #{image1},
+            </if>
+            <if test="image1Type != null">
+                image1_type = #{image1Type},
+            </if>
+            <if test="image2 != null">
+                image2 = #{image2},
+            </if>
+            <if test="image2Type != null">
+                image2_type = #{image2Type},
             </if>
             <if test="patientGender != null">
                 patient_gender = #{patientGender},
@@ -78,6 +92,7 @@
                 diagnosis = #{diagnosis},
             </if>
         </set>
+        WHERE id = #{id}
     </update>
 
 </mapper>

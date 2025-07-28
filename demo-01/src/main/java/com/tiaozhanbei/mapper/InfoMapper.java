@@ -16,5 +16,7 @@ public interface InfoMapper extends BaseMapper<Info> {
 
     List<Info> selectInfo(Info info);
 
+    List<Info> selectAll();
+
     int updateInfo(Info info);
 }

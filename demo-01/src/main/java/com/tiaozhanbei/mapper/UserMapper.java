@@ -16,5 +16,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     List<User> selectUser(User user);
 
+    List<User> selectAll();
+
     int updateUser(User user);
 }
