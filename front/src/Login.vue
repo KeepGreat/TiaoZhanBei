@@ -102,6 +102,7 @@ const handleLogin = async () => {
   // } finally {
   //   isLoading.value = false;
   // }
+  localStorage.setItem('isLoggedIn', 'true');
   showLogin.value = false;
   router.push('/wrapper');
   ElMessage.success('登录成功');
@@ -110,7 +111,6 @@ const handleLogin = async () => {
 
 <template>
   <div>
-    <router-view></router-view>
     <div class="login-container" v-if="showLogin">
       <div class="login">
         <el-form :model="form" :rules="rules" ref="formRef">
