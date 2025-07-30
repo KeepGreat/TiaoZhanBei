@@ -17,9 +17,9 @@
               text-color="#fff"
               router
             >
-              <el-menu-item index="">
+              <el-menu-item index="/wrapper/image-recognition">
                 <el-icon><location /></el-icon>
-                <span>一</span>
+                <span>图像识别</span>
               </el-menu-item>
               <el-menu-item index="/wrapper/history">
                 <el-icon><Clock /></el-icon>

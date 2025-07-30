@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from './Login.vue'
 import Wrapper from './components/wrapper.vue'
 import History from './components/history.vue'
+import ImageRecognition from './components/ImageRecognition.vue';
 
 const routes = [
   { path: '/', component: Login },
@@ -9,7 +10,8 @@ const routes = [
     path: '/wrapper',
     component: Wrapper,
     children: [
-      { path: 'history', component: History }
+      { path: 'history', component: History },
+      { path: 'image-recognition', component: ImageRecognition }
     ]
   }
 ]

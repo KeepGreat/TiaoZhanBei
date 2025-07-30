@@ -15,9 +15,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login")
-    public Boolean login(@RequestParam String username,
-                         @RequestParam String password){
+    @PostMapping("/login")
+    public Boolean login(@RequestBody User user){
+        String username = user.getUsername();
+        String password = user.getPassword();
         return userService.login(username, password);
     }
 
