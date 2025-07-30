@@ -60,11 +60,11 @@ const handleRegister = async () => {
 
   try {
     await formRef.value.validate()
-    const response = await axios.post('http://localhost:8080/user/register', {
+    const response = await axios.post('http://localhost:8080/user', {
       username: form.value.username,
       password: form.value.password
     })
-    if (response.data === '注册成功') {
+    if (response.data === '增加用户成功') {
       ElMessage.success('注册成功')
       isRegister.value = false // 注册成功后返回登录界面
     } else {
@@ -81,6 +81,7 @@ const handleRegister = async () => {
 //登录请求
 const handleLogin = async () => {
   isLoading.value = true;
+  localStorage.setItem('isLoggedIn', 'true');
 
   // try {
   //   await formRef.value.validate();
@@ -88,7 +89,7 @@ const handleLogin = async () => {
   //     username: form.value.username,
   //     password: form.value.password
   //   });
-  //   if (response.data.includes('登录成功')) {
+  //   if (response.data.includes('true')) {
   //     ElMessage.success('登录成功');
   //     showLogin.value = false;
   //     router.push('/wrapper');
@@ -102,10 +103,9 @@ const handleLogin = async () => {
   // } finally {
   //   isLoading.value = false;
   // }
-  localStorage.setItem('isLoggedIn', 'true');
   showLogin.value = false;
   router.push('/wrapper');
-  ElMessage.success('登录成功');
+
 };
 </script>
 

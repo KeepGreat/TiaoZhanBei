@@ -5,7 +5,7 @@
         <div class="list" :style="{ width: isCollapse ? '63.33px' : '20%' }">
           <div class="title" @click="isCollapse = !isCollapse">导航</div>
           <div class="hamburger" @click="isCollapse = !isCollapse">
-            <el-icon><Expand /></el-icon>
+            <el-icon ><Expand /></el-icon>
           </div>
           <el-col>
             <el-menu
@@ -22,7 +22,7 @@
                 <span>一</span>
               </el-menu-item>
               <el-menu-item index="/wrapper/history">
-                <el-icon><location /></el-icon>
+                <el-icon><Clock /></el-icon>
                 <span>历史记录</span>
               </el-menu-item>
               <el-menu-item index="">
@@ -49,7 +49,7 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>登出</el-dropdown-item>
+                    <el-dropdown-item @click="handleLogout">登出</el-dropdown-item>
                     <el-dropdown-item>修改密码</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -67,8 +67,14 @@
   
   <script setup>
   import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from 'vue'
-  import { ArrowDown, Expand } from '@element-plus/icons-vue'
+  import { ArrowDown, Expand,Clock } from '@element-plus/icons-vue'
   import { RouterLink, RouterView } from 'vue-router'
+  import router from '../router';
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    router.push('/');
+  };
   
   const state = reactive({
     circleUrl:
@@ -100,6 +106,11 @@ header,
   height: 100vh;
   box-sizing: border-box;
   overflow: hidden;
+}
+
+.hamburger {
+  display: flex;
+  justify-content: center; /* 水平居中 */
 }
 
   .el-icon--right {
