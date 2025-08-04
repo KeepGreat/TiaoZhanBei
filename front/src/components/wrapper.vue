@@ -18,16 +18,16 @@
               router
             >
               <el-menu-item index="/wrapper/image-recognition">
-                <el-icon><location /></el-icon>
+                <el-icon><View /></el-icon>
                 <span>图像识别</span>
               </el-menu-item>
               <el-menu-item index="/wrapper/history">
                 <el-icon><Clock /></el-icon>
                 <span>历史记录</span>
               </el-menu-item>
-              <el-menu-item index="">
-                <el-icon><location /></el-icon>
-                <span>三</span>
+              <el-menu-item index="/wrapper/user">
+                <el-icon><User /></el-icon>
+                <span>个人中心</span>
               </el-menu-item>
               <el-menu-item index="">
                 <el-icon><location /></el-icon>
@@ -39,10 +39,10 @@
         <div class="container" :style="{ width: isCollapse ? 'calc(100% - 63.33px)' : '80%' }">
           <div class="welcome">
             <div class="welcome-title">欢迎使用白癜风预测系统</div>
-            <div class="admin" style="align-items: center; display: flex;">
+            <div class="admin" style="align-items: center; display: flex; margin-left: auto; margin-right: 40px;" >
               <el-dropdown :trigger="['click']">
                 <span class="el-dropdown-link">
-                  <el-avatar :size="15" :src="circleUrl" style="margin-right: 8px;" /> <span>admin</span>
+                  <el-avatar :size="15" :src="circleUrl" style="margin-right: 8px;" /> <span>{{ username }}</span>
                   <el-icon class="el-icon--right">
                     <arrow-down />
                   </el-icon>
@@ -50,7 +50,6 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="handleLogout">登出</el-dropdown-item>
-                    <el-dropdown-item>修改密码</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -67,9 +66,11 @@
   
   <script setup>
   import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from 'vue'
-  import { ArrowDown, Expand,Clock } from '@element-plus/icons-vue'
+  import { ArrowDown, Expand,Clock,View,User } from '@element-plus/icons-vue'
   import { RouterLink, RouterView } from 'vue-router'
   import router from '../router';
+
+  const username = ref('');
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -83,13 +84,18 @@
   })
   
   const { circleUrl, sizeList } = toRefs(state)
-  const isCollapse = ref(false) 
+  const isCollapse = ref(true) 
   //检测视口变化
   const checkMobile = () => {
-    isCollapse.value = window.innerWidth <= 768;
+    if (window.innerWidth <= 768) {
+    isCollapse.value = true;
+  }
   };
+
+
   
   onMounted(() => {
+    username.value = localStorage.getItem('username') || 'admin';
     checkMobile();
     window.addEventListener('resize', checkMobile);
   });
@@ -111,6 +117,7 @@ header,
 .hamburger {
   display: flex;
   justify-content: center; /* 水平居中 */
+  padding: 10px;
 }
 
   .el-icon--right {
@@ -141,7 +148,7 @@ header,
   transition: width 0.3s ease-in-out;
 }
 .title {
-  height: 6%;
+  height: 75px;
   align-items: center;
   justify-content: center;
   background: rgb(15, 1, 1);

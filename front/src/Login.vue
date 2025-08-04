@@ -81,31 +81,33 @@ const handleRegister = async () => {
 //登录请求
 const handleLogin = async () => {
   isLoading.value = true;
-  localStorage.setItem('isLoggedIn', 'true');
 
-  // try {
-  //   await formRef.value.validate();
-  //   const response = await axios.post('http://localhost:8080/user/login', {
-  //     username: form.value.username,
-  //     password: form.value.password
-  //   });
-  //   if (response.data.includes('true')) {
-  //     ElMessage.success('登录成功');
-  //     showLogin.value = false;
-  //     router.push('/wrapper');
-  //   } else {
-  //     ElMessage.error(response.data);
-  //   }
-  // } catch (error) {
-  //   console.error('登录请求失败:', error);
-  //   ElMessage.error('用户或密码错误');
-  //   throw error;
-  // } finally {
-  //   isLoading.value = false;
-  // }
-  showLogin.value = false;
-  router.push('/wrapper');
+  try {
+    await formRef.value.validate();
+    const response = await axios.post('http://localhost:8080/user/login', {
+      username: form.value.username,
+      password: form.value.password
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
+    if (response.data === true) {
+      ElMessage.success('登录成功');
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('username', form.value.username); // 登录成功后保存用户名
+      showLogin.value = false;
+      router.push('/wrapper');
+    } else {
+      ElMessage.error('用户名或密码错误');
+    }
+  } catch (error) {
+    console.error('登录请求失败:', error);
+    ElMessage.error('登录失败，请稍后再试');
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 

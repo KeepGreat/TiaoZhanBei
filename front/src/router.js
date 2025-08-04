@@ -3,6 +3,7 @@ import Login from './Login.vue'
 import Wrapper from './components/wrapper.vue'
 import History from './components/history.vue'
 import ImageRecognition from './components/ImageRecognition.vue';
+import User from './components/user.vue';
 
 const routes = [
   { path: '/', component: Login },
@@ -11,7 +12,8 @@ const routes = [
     component: Wrapper,
     children: [
       { path: 'history', component: History },
-      { path: 'image-recognition', component: ImageRecognition }
+      { path: 'image-recognition', component: ImageRecognition },
+      { path: 'user', component: User } 
     ]
   }
 ]
