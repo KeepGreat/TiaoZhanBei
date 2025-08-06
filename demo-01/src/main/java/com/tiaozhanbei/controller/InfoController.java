@@ -59,9 +59,10 @@ public class InfoController {
                                   @RequestParam(required = false) String patientName,
                                   @RequestParam(required = false) String keyword,
                                   @RequestParam(required = false) String diagnosis,
-                                  @RequestParam(required = false) LocalDateTime createdAt){
+                                  @RequestParam(required = false) LocalDateTime queryStart,
+                                  @RequestParam(required = false) LocalDateTime queryEnd){
         Page<Info> pageInfo = infoService.getPageInfo(pageNo, pageSize,
-                patientGender, patientAge, patientName, keyword, diagnosis, createdAt);
+                patientGender, patientAge, patientName, keyword, diagnosis, queryStart, queryEnd);
         return pageInfo;
     }
 

@@ -32,12 +32,12 @@ public class MyBatisPlusTest {
         File image2File = new File(image2Path);
 
         Info info = new Info();
-        info.setPatientName("派大星");
         info.setPatientAge((short) 1);
         info.setPatientGender("男");
+        info.setPatientName("test");
         info.setDiagnosis("无");
         info.setKeyword("无");
-        info.setCreatedAt(LocalDateTime.now());
+        info.setCreatedAt(LocalDateTime.of(2026, 1, 1, 1, 1, 1));
         FileInputStream iamge1InputStream = new FileInputStream(image1File);
         MockMultipartFile image1 = new MockMultipartFile("image1", image1File.getName(), "image/jpg", iamge1InputStream);
         FileInputStream iamge2InputStream = new FileInputStream(image2File);
