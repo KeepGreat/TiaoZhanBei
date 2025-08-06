@@ -3,6 +3,7 @@ package com.tiaozhanbei.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tiaozhanbei.mapper.UserMapper;
 import com.tiaozhanbei.pojo.User;
+import com.tiaozhanbei.pojo.dto.UpdateUserDTO;
 import com.tiaozhanbei.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updateUser(User user) {
-        int row = userMapper.updateById(user);
+    public int updateUser(UpdateUserDTO userDTO) {
+        String oldPassword = userDTO.getOldPassword();
+        User user = userMapper.selectById(userDTO.getUser().getId());
+        if (!user.getPassword().equals(oldPassword)) return -1;
+        User newUser = userDTO.getUser();
+        int row = userMapper.updateById(newUser);
         return row;
     }
 
@@ -50,11 +55,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean login(String username, String password) {
-        List<User> list = userMapper.selectList(new QueryWrapper<User>().eq("username", username));
+    public User login(String username, String password) {
+        List<User> list = userMapper.selectList(new QueryWrapper<User>().eq("username", username)
+                .eq("password", password));
         if (list.isEmpty()) {
-            return false;
+            return null;
         }
-        return list.get(0).getPassword().equals(password);
+        return list.get(0);
     }
 }

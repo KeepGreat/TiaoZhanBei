@@ -49,8 +49,9 @@ public class InfoServiceImpl implements InfoService {
 
     @Override
     public Page<Info> getPageInfo(int page, int size,
-                                  String gender, Short age, String keyword, String diagnosis, LocalDateTime createdAt) {
+                                  String gender, Short age, String name, String keyword, String diagnosis, LocalDateTime createdAt) {
         QueryWrapper<Info> infoQueryWrapper = new QueryWrapper<>();
+        if (name != null) infoQueryWrapper.like("patient_name", name);
         if (gender != null) infoQueryWrapper.eq("patient_gender", gender);
         if (age != null) infoQueryWrapper.eq("patient_age", age);
         if (keyword != null) infoQueryWrapper.like("keyword", keyword);

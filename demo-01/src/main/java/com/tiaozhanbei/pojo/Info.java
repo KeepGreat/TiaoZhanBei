@@ -17,6 +17,7 @@ public class Info {
     private String image2Type;
     private String patientGender;
     private Short patientAge;
+    private String patientName;
     private String keyword;
     private String diagnosis;
     //格式：yyyy-mm-ddThh:mm:ss

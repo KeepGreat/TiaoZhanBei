@@ -32,6 +32,7 @@ public class MyBatisPlusTest {
         File image2File = new File(image2Path);
 
         Info info = new Info();
+        info.setPatientName("派大星");
         info.setPatientAge((short) 1);
         info.setPatientGender("男");
         info.setDiagnosis("无");

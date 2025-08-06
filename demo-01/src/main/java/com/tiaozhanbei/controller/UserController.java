@@ -1,6 +1,7 @@
 package com.tiaozhanbei.controller;
 
 import com.tiaozhanbei.pojo.User;
+import com.tiaozhanbei.pojo.dto.UpdateUserDTO;
 import com.tiaozhanbei.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public Boolean login(@RequestBody User user){
+    public User login(@RequestBody User user){
         String username = user.getUsername();
         String password = user.getPassword();
         return userService.login(username, password);
@@ -37,8 +38,9 @@ public class UserController {
     }
 
     @PutMapping
-    public String updateUser(@RequestBody User user) {
-        int row = userService.updateUser(user);
+    public String updateUser(@RequestBody UpdateUserDTO userDTO) {
+        int row = userService.updateUser(userDTO);
+        if (row == -1) return "原密码错误";
         if (row == 0) return "更新用户失败";
         return "更新用户成功";
     }

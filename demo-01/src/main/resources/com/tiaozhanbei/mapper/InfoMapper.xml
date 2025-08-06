@@ -7,8 +7,8 @@
 
 <!--    int insertInfo(Info info);-->
     <insert id="insertInfo">
-        INSERT INTO `info`(`image1`, `image1_type`, `image2`, `image2_type`, `patient_gender`, `patient_age`, `keyword`, `diagnosis`, `created_at`)
-        VALUES(#{image1}, #{image1Type}, #{image2}, #{image2Type}, #{patientGender}, #{patientAge}, #{keyword}, #{diagnosis}, #{createdAt})
+        INSERT INTO `info`(`image1`, `image1_type`, `image2`, `image2_type`, `patient_gender`, `patient_age`, `patient_name`, `keyword`, `diagnosis`, `created_at`)
+        VALUES(#{image1}, #{image1Type}, #{image2}, #{image2Type}, #{patientGender}, #{patientAge}, #{patientName}, #{keyword}, #{diagnosis}, #{createdAt})
     </insert>
 
 <!--    int deleteInfo(Info info);-->
@@ -20,6 +20,9 @@
             </if>
             <if test="patientAge != null">
                 AND patient_age = #{patientAge}
+            </if>
+            <if test="patientName != null">
+                AND patient_name LIKE CONCAT('%', #{patientName}, '%')
             </if>
             <if test="keyword != null">
                 AND keyword LIKE CONCAT('%', #{keyword}, '%')
@@ -45,6 +48,9 @@
             </if>
             <if test="patientAge != null">
                 AND patient_age = #{patientAge}
+            </if>
+            <if test="patientName != null">
+                AND patient_name LIKE CONCAT('%', #{patientName}, '%')
             </if>
             <if test="keyword != null">
                 AND keyword LIKE CONCAT('%', #{keyword}, '%')
@@ -84,6 +90,9 @@
             </if>
             <if test="patientAge != null">
                 patient_age = #{patientAge},
+            </if>
+            <if test="patientName != null">
+                patient_name = #{patientName},
             </if>
             <if test="keyword != null">
                 keyword = #{keyword},

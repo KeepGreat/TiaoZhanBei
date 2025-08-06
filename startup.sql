@@ -19,6 +19,7 @@ CREATE TABLE `info` (
   `image2_type` VARCHAR(10) COMMENT '图片二类型',
   `patient_gender` CHAR(1) NOT NULL COMMENT '病人性别',
   `patient_age` TINYINT NOT NULL COMMENT '病人年龄',
+  `patient_name` VARCHAR(10) COMMENT '病人姓名',
   `keyword` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '诊断疾病关键字',
   `diagnosis` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '诊断结果',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间'

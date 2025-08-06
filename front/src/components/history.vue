@@ -2,6 +2,9 @@
   <div class="history-container">
     <el-dialog v-model="showSpecifyDeleteDialog" title="条件删除" width="500px">
       <el-form :model="deleteForm" label-width="100px">
+        <el-form-item label="患者姓名">
+          <el-input v-model="deleteForm.patientName" placeholder="请输入患者姓名" />
+        </el-form-item>
         <el-form-item label="性别">
           <el-select v-model="deleteForm.patientGender" placeholder="请选择">
             <el-option label="男" value="男" />
@@ -20,10 +23,10 @@
         <el-form-item label="创建时间">
           <el-date-picker
             v-model="deleteForm.createdAt"
-            type="datetime"
+            type="date"
             placeholder="选择时间"
-            format="YYYY-MM-DD HH:mm:ss"
-            value-format="YYYY-MM-DDTHH:mm:ss"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
           />
         </el-form-item>
       </el-form>
@@ -35,10 +38,23 @@
     <div class="top-area">
       <div class="title">历史识别记录</div>
       <div class="search-blank">
-        <el-input v-model="keyword" 
-        style="width: 240px" 
-        placeholder="请输入关键词"
-        @keyup.enter="loadData" />
+        <el-input v-model="searchForm.patientName" placeholder="患者姓名" style="width: 160px" clearable />
+        <el-select v-model="searchForm.patientGender" placeholder="性别" style="width: 100px" clearable>
+          <el-option label="男" value="男" />
+          <el-option label="女" value="女" />
+        </el-select>
+        <el-input-number v-model="searchForm.patientAge" :min="0" placeholder="年龄" style="width: 120px" />
+        <el-input v-model="searchForm.keyword" placeholder="关键词" style="width: 160px" clearable />
+        <el-input v-model="searchForm.diagnosis" placeholder="诊断结果" style="width: 160px" clearable />
+        <el-date-picker
+          v-model="searchForm.createdAt"
+          type="date"
+          placeholder="创建时间"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
+          style="width: 200px"
+          clearable
+        />
         <el-button :icon="Search" class="search-button" @click="loadData" />
         <el-button @click="resetSearch" class="reset-button">重置</el-button>
         <el-button class="specify-delete-button" type="danger" @click="SpecifyDeleteButton" >批量删除</el-button>
@@ -53,6 +69,7 @@
         style="width: 100%" 
         @selection-change="handleSelectionChange">
           <el-table-column prop="id" label="记录编号" width="120" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="patientName" label="患者姓名" width="120" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientGender" label="性别" width="100" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientAge" label="年龄" width="100" header-align="center" align="center"></el-table-column>
           <el-table-column label="伍德灯图像" header-align="center" align="center">
@@ -130,7 +147,15 @@ import { ElTable, ElTableColumn,ElMessage,ElMessageBox } from 'element-plus';
 import { Search,ArrowLeft,ArrowRight,Delete, Loading } from '@element-plus/icons-vue';
 import axios from 'axios';  
 
-const keyword = ref('');
+const searchForm = ref({
+  patientName: '',
+  patientGender: '',
+  patientAge: null,
+  keyword: '',
+  diagnosis: '',
+  createdAt: ''
+});
+
 const tableData = ref([]);
 //分页功能
 const currentPage = ref(1)
@@ -188,20 +213,43 @@ const formatDate = (isoString) =>
 
 const loadData = async () => {
   try {
+    const params = {
+      ...searchForm.value,
+      page: currentPage.value,
+      size: pageSize.value,
+    };
+
+    // 清除空字段
+    Object.keys(params).forEach(key => {
+      if (params[key] === '' || params[key] === null) {
+        delete params[key];
+      }
+    });
+
     const res = await axios.get(`http://localhost:8080/info/${currentPage.value}/${pageSize.value}`, {
-      params: { keyword: keyword.value }
-    })
-    tableData.value = res.data.records
-    total.value = res.data.total
+      params
+    });
+
+    tableData.value = res.data.records;
+    total.value = res.data.total;
   } catch (e) {
-    console.error('加载数据失败', e)
+    console.error('加载数据失败', e);
   }
-}
+};
+
+
 
 const resetSearch = () => {
-  keyword.value = ''
-  loadData()
-}
+  searchForm.value = {
+    patientName: '',
+    patientGender: '',
+    patientAge: null,
+    keyword: '',
+    diagnosis: '',
+    createdAt: ''
+  };
+  loadData();
+};
 
 //单独删除
 const handleDelete = async (id) => {

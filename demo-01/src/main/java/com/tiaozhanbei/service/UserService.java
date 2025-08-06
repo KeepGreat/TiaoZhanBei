@@ -1,6 +1,7 @@
 package com.tiaozhanbei.service;
 
 import com.tiaozhanbei.pojo.User;
+import com.tiaozhanbei.pojo.dto.UpdateUserDTO;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public interface UserService {
 
     int deleteUser(Integer id);
 
-    int updateUser(User user);
+    int updateUser(UpdateUserDTO userDTO);
 
     User selectUserById(Integer id);
 
     List<User> selectAll();
 
-    Boolean login(String username, String password);
+    User login(String username, String password);
 }

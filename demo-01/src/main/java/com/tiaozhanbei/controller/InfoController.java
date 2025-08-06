@@ -56,11 +56,12 @@ public class InfoController {
                                   @PathVariable("size") int pageSize,
                                   @RequestParam(required = false) String patientGender,
                                   @RequestParam(required = false) Short patientAge,
+                                  @RequestParam(required = false) String patientName,
                                   @RequestParam(required = false) String keyword,
                                   @RequestParam(required = false) String diagnosis,
                                   @RequestParam(required = false) LocalDateTime createdAt){
         Page<Info> pageInfo = infoService.getPageInfo(pageNo, pageSize,
-                patientGender, patientAge, keyword, diagnosis, createdAt);
+                patientGender, patientAge, patientName, keyword, diagnosis, createdAt);
         return pageInfo;
     }
 

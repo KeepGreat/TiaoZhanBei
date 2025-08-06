@@ -84,6 +84,7 @@ const handleLogin = async () => {
 
   try {
     await formRef.value.validate();
+
     const response = await axios.post('http://localhost:8080/user/login', {
       username: form.value.username,
       password: form.value.password
@@ -93,10 +94,13 @@ const handleLogin = async () => {
       }
     });
 
-    if (response.data === true) {
+    const user = response.data;
+
+    if (user) {
       ElMessage.success('登录成功');
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', form.value.username); // 登录成功后保存用户名
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('userId', user.id);         // 保存用户ID
+      sessionStorage.setItem('username', user.username); // 保存用户名
       showLogin.value = false;
       router.push('/wrapper');
     } else {
@@ -109,6 +113,7 @@ const handleLogin = async () => {
     isLoading.value = false;
   }
 };
+
 </script>
 
 <template>

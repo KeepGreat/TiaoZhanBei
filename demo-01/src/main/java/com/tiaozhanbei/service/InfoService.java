@@ -19,7 +19,7 @@ public interface InfoService{
     List<Info> getAllInfo();
 
     Page<Info> getPageInfo(int size, int page,
-                           String gender, Short age, String keyword, String diagnosis, LocalDateTime createdAt);
+                           String gender, Short age, String name, String keyword, String diagnosis, LocalDateTime createdAt);
 
     Info getInfoById(Integer id);
 }

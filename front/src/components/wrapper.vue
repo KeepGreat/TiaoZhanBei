@@ -73,7 +73,7 @@
   const username = ref('');
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('isLoggedIn');
     router.push('/');
   };
   
@@ -95,7 +95,7 @@
 
   
   onMounted(() => {
-    username.value = localStorage.getItem('username') || 'admin';
+    username.value = sessionStorage.getItem('username') || 'admin';
     checkMobile();
     window.addEventListener('resize', checkMobile);
   });
