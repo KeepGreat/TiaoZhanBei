@@ -1,5 +1,6 @@
 package com.tiaozhanbei.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tiaozhanbei.pojo.Info;
 
@@ -18,9 +19,9 @@ public interface InfoService{
 
     List<Info> getAllInfo();
 
-    Page<Info> getPageInfo(int size, int page,
-                           String gender, Short age, String name, String keyword, String diagnosis,
-                           LocalDateTime queryStart, LocalDateTime queryEnd);
+    IPage<Info> getPageInfo(int size, int page,
+                            String gender, Short age, String name, String keyword, String diagnosis,
+                            LocalDateTime queryStart, LocalDateTime queryEnd);
 
     Info getInfoById(Integer id);
 }

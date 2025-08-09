@@ -104,4 +104,35 @@
         WHERE id = #{id}
     </update>
 
+<!--    IPage<Info> selectPageInfo(IPage<Info> page,-->
+<!--    @Param("gender") String gender, @Param("age") Short age, @Param("name") String name,-->
+<!--    @Param("keyword") String keyword, @Param("diagnosis") String diagnosis,-->
+<!--    @Param("queryStart") LocalDateTime queryStart, @Param("queryEnd") LocalDateTime queryEnd);-->
+    <select id="selectPageInfo" resultType="info">
+        SELECT id, patient_gender, patient_age, keyword, diagnosis, created_at FROM `info`
+        <where>
+            <if test="gender != null">
+                AND patient_gender = #{gender}
+            </if>
+            <if test="age != null">
+                AND patient_age = #{age}
+            </if>
+            <if test="name != null">
+                AND patient_name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="keyword != null">
+                AND keyword LIKE CONCAT('%', #{keyword} , '%')
+            </if>
+            <if test="diagnosis != null">
+                AND diagnosis LIKE CONCAT('%', #{diagnosis}, '%')
+            </if>
+            <if test="queryStart != null">
+                AND created_at &gt;= #{queryStart}
+            </if>
+            <if test="queryEnd != null">
+                AND created_at &lt;= #{queryEnd}
+            </if>
+        </where>
+    </select>
+
 </mapper>

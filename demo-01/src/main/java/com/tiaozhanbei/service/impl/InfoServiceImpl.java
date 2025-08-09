@@ -1,6 +1,7 @@
 package com.tiaozhanbei.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tiaozhanbei.mapper.InfoMapper;
 import com.tiaozhanbei.pojo.Info;
@@ -48,18 +49,20 @@ public class InfoServiceImpl implements InfoService {
     }
 
     @Override
-    public Page<Info> getPageInfo(int page, int size,
+    public IPage<Info> getPageInfo(int page, int size,
                                   String gender, Short age, String name, String keyword, String diagnosis,
                                   LocalDateTime queryStart, LocalDateTime queryEnd) {
-        QueryWrapper<Info> infoQueryWrapper = new QueryWrapper<>();
-        if (gender != null) infoQueryWrapper.eq("patient_gender", gender);
-        if (age != null) infoQueryWrapper.eq("patient_age", age);
-        if (name != null) infoQueryWrapper.like("patient_name", name);
-        if (keyword != null) infoQueryWrapper.like("keyword", keyword);
-        if (diagnosis != null) infoQueryWrapper.like("diagnosis", diagnosis);
-        if (queryStart != null) infoQueryWrapper.gt("created_at", queryStart);
-        if (queryEnd != null) infoQueryWrapper.lt("created_at", queryEnd);
-        Page<Info> infoPage = infoMapper.selectPage(new Page<>(page, size), infoQueryWrapper);
+//        QueryWrapper<Info> infoQueryWrapper = new QueryWrapper<>();
+//        if (gender != null) infoQueryWrapper.eq("patient_gender", gender);
+//        if (age != null) infoQueryWrapper.eq("patient_age", age);
+//        if (name != null) infoQueryWrapper.like("patient_name", name);
+//        if (keyword != null) infoQueryWrapper.like("keyword", keyword);
+//        if (diagnosis != null) infoQueryWrapper.like("diagnosis", diagnosis);
+//        if (queryStart != null) infoQueryWrapper.gt("created_at", queryStart);
+//        if (queryEnd != null) infoQueryWrapper.lt("created_at", queryEnd);
+//        Page<Info> infoPage = infoMapper.selectPage(new Page<>(page, size), infoQueryWrapper);
+        IPage<Info> infoPage = new Page<>(page, size);
+        infoMapper.selectPageInfo(infoPage, gender, age, name, keyword, diagnosis, queryStart, queryEnd);
         return infoPage;
     }
 
