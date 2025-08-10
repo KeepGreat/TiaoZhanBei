@@ -1,5 +1,6 @@
 package com.tiaozhanbei.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tiaozhanbei.pojo.Info;
 import com.tiaozhanbei.service.InfoService;
@@ -52,7 +53,7 @@ public class InfoController {
     }
 
     @GetMapping("/{page}/{size}")
-    public Page<Info> getPageInfo(@PathVariable("page") int pageNo,
+    public IPage<Info> getPageInfo(@PathVariable("page") int pageNo,
                                   @PathVariable("size") int pageSize,
                                   @RequestParam(required = false) String patientGender,
                                   @RequestParam(required = false) Short patientAge,
@@ -61,7 +62,7 @@ public class InfoController {
                                   @RequestParam(required = false) String diagnosis,
                                   @RequestParam(required = false) LocalDateTime queryStart,
                                   @RequestParam(required = false) LocalDateTime queryEnd){
-        Page<Info> pageInfo = infoService.getPageInfo(pageNo, pageSize,
+        IPage<Info> pageInfo = infoService.getPageInfo(pageNo, pageSize,
                 patientGender, patientAge, patientName, keyword, diagnosis, queryStart, queryEnd);
         return pageInfo;
     }

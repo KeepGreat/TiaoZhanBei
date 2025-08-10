@@ -1,8 +1,11 @@
 package com.tiaozhanbei.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.tiaozhanbei.pojo.Info;
+import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -19,4 +22,9 @@ public interface InfoMapper extends BaseMapper<Info> {
     List<Info> selectAll();
 
     int updateInfo(Info info);
+
+    IPage<Info> selectPageInfo(IPage<?> page,
+                               @Param("gender") String gender, @Param("age") Short age, @Param("name") String name,
+                               @Param("keyword") String keyword, @Param("diagnosis") String diagnosis,
+                               @Param("queryStart") LocalDateTime queryStart, @Param("queryEnd") LocalDateTime queryEnd);
 }
