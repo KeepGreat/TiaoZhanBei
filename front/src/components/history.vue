@@ -77,28 +77,9 @@
           <el-table-column prop="patientName" label="患者姓名" width="120" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientGender" label="性别" width="100" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientAge" label="年龄" width="100" header-align="center" align="center"></el-table-column>
-          <el-table-column label="伍德灯图像" header-align="center" align="center">
+          <el-table-column label="查看图片"  header-align="center" align="center">
             <template #default="scope">
-              <el-image
-                :src="getImageSrc(scope.row, 1)"
-                :preview-src-list="[getImageSrc(scope.row, 1)]"
-                append-to-body
-                style="width:60px; height:60px"
-                @preview-open="onPreviewOpen"
-                @preview-close="onPreviewClose"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="自然光图像" header-align="center" align="center">
-            <template #default="scope">
-              <el-image
-                :src="getImageSrc(scope.row, 2)"
-                :preview-src-list="[getImageSrc(scope.row, 2)]"
-                append-to-body
-                style="width:60px; height:60px"
-                @preview-open="onPreviewOpen"
-                @preview-close="onPreviewClose"
-              />
+              <el-button type="primary" size="small" @click="getInfoById(scope.row.id)">查看</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="keyword" label="关键词" width="120" header-align="center" align="center"></el-table-column>
@@ -144,6 +125,40 @@
         <el-icon><ArrowRight /></el-icon>
       </div>
     </div>
+    <el-dialog
+      v-model="showDetailDialog"
+      title="记录详情"
+      width="600px"
+    >
+      <div v-if="detailRecord">
+        <p><strong>患者姓名：</strong>{{ detailRecord.patientName }}</p>
+        <p><strong>性别：</strong>{{ detailRecord.patientGender }}</p>
+        <p><strong>年龄：</strong>{{ detailRecord.patientAge }}</p>
+        <p><strong>关键词：</strong>{{ detailRecord.keyword }}</p>
+        <p><strong>诊断结果：</strong>{{ detailRecord.diagnosis }}</p>
+        <p><strong>创建时间：</strong>{{ formatDate(detailRecord.createdAt) }}</p>
+        <div style="margin-top: 12px;">
+          <p><strong>伍德灯图像：</strong></p>
+          <el-image
+            v-if="detailRecord.image1"
+            :src="`data:${detailRecord.image1Type};base64,${detailRecord.image1}`"
+            :preview-src-list="[`data:${detailRecord.image1Type};base64,${detailRecord.image1}`]"
+            style="width: 200px; height: 200px;"
+            fit="contain"
+          />
+        </div>
+        <div style="margin-top: 12px;">
+          <p><strong>自然光图像：</strong></p>
+          <el-image
+            v-if="detailRecord.image2"
+            :src="`data:${detailRecord.image2Type};base64,${detailRecord.image2}`"
+            :preview-src-list="[`data:${detailRecord.image2Type};base64,${detailRecord.image2}`]"
+            style="width: 200px; height: 200px;"
+            fit="contain"
+          />
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -175,6 +190,10 @@ const isBatchMode = ref(false)
 const tableRef = ref(null)
 //指定删除
 const showSpecifyDeleteDialog = ref(false)
+// 详情弹窗
+const showDetailDialog = ref(false);
+const detailRecord = ref(null);
+
 const deleteForm = ref({
   patientName: '',
   patientGender: '',
@@ -240,10 +259,30 @@ const loadData = async () => {
       params
     });
 
-    tableData.value = res.data.records;
+     tableData.value = res.data.records.map(item => ({
+      id: item.id,
+      patientName: item.patientName,
+      patientGender: item.patientGender,
+      patientAge: item.patientAge,
+      keyword: item.keyword,
+      diagnosis: item.diagnosis,
+      createdAt: item.createdAt,
+      // 不包含 image1 / image2 这些大字段
+    }));
     total.value = res.data.total;
   } catch (e) {
     console.error('加载数据失败', e);
+  }
+};
+
+const getInfoById = async (id) => {
+  try {
+    const res = await axios.get(`http://localhost:8080/info/${id}`);
+    detailRecord.value = res.data;
+    showDetailDialog.value = true;
+  } catch (err) {
+    console.error('获取记录详情失败', err);
+    ElMessage.error('获取记录详情失败');
   }
 };
 
@@ -254,7 +293,7 @@ const resetSearch = () => {
     patientAge: null,
     keyword: '',
     diagnosis: '',
-    createdAt: ''
+    dateRange: []
   };
   loadData();
 };

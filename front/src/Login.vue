@@ -102,7 +102,7 @@ const handleLogin = async () => {
       sessionStorage.setItem('userId', user.id);         // 保存用户ID
       sessionStorage.setItem('username', user.username); // 保存用户名
       showLogin.value = false;
-      router.push('/wrapper');
+      router.push('/wrapper/image-recognition');
     } else {
       ElMessage.error('用户名或密码错误');
     }
