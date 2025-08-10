@@ -22,11 +22,14 @@
         </el-form-item>
         <el-form-item label="创建时间">
           <el-date-picker
-            v-model="deleteForm.createdAt"
-            type="date"
-            placeholder="选择时间"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
+            v-model="deleteForm.dateRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DDTHH:mm:ss"
+            style="width: 350px"
           />
         </el-form-item>
       </el-form>
@@ -47,27 +50,29 @@
         <el-input v-model="searchForm.keyword" placeholder="关键词" style="width: 160px" clearable />
         <el-input v-model="searchForm.diagnosis" placeholder="诊断结果" style="width: 160px" clearable />
         <el-date-picker
-          v-model="searchForm.createdAt"
-          type="date"
-          placeholder="创建时间"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
-          style="width: 200px"
+          v-model="searchForm.dateRange"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DDTHH:mm:ss"
+          style="width: 350px"
           clearable
         />
         <el-button :icon="Search" class="search-button" @click="loadData" />
         <el-button @click="resetSearch" class="reset-button">重置</el-button>
         <el-button class="specify-delete-button" type="danger" @click="SpecifyDeleteButton" >批量删除</el-button>
-        <el-button class="batch-delete-button" @click="BatchDeleteButton" :Loading="isDeleting">
+        <el-button class="batch-delete-button" @click="BatchDeleteButton" :loading="isDeleting">
           {{ isBatchMode ? '取消多选' : '多选' }}
         </el-button>
       </div>
       <div class="history-table">
         <el-table 
-        ref="tableRef"
-        :data="tableData" 
-        style="width: 100%" 
-        @selection-change="handleSelectionChange">
+          ref="tableRef"
+          :data="tableData" 
+          style="width: 100%" 
+          @selection-change="handleSelectionChange">
           <el-table-column prop="id" label="记录编号" width="120" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientName" label="患者姓名" width="120" header-align="center" align="center"></el-table-column>
           <el-table-column prop="patientGender" label="性别" width="100" header-align="center" align="center"></el-table-column>
@@ -77,8 +82,10 @@
               <el-image
                 :src="getImageSrc(scope.row, 1)"
                 :preview-src-list="[getImageSrc(scope.row, 1)]"
-                hide-on-click-modal
+                append-to-body
                 style="width:60px; height:60px"
+                @preview-open="onPreviewOpen"
+                @preview-close="onPreviewClose"
               />
             </template>
           </el-table-column>
@@ -87,8 +94,10 @@
               <el-image
                 :src="getImageSrc(scope.row, 2)"
                 :preview-src-list="[getImageSrc(scope.row, 2)]"
-                hide-on-click-modal
+                append-to-body
                 style="width:60px; height:60px"
+                @preview-open="onPreviewOpen"
+                @preview-close="onPreviewClose"
               />
             </template>
           </el-table-column>
@@ -103,7 +112,7 @@
 
           <el-table-column v-if="!isBatchMode" width="55">
             <template #default="scope">
-            <el-button @click="handleDelete(scope.row.id)" :icon="Delete" circle size="small"></el-button>
+              <el-button @click="handleDelete(scope.row.id)" :icon="Delete" circle size="small"></el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -111,7 +120,6 @@
             type="selection"
             width="55"
           />
-
         </el-table>
       </div>
     </div>
@@ -122,11 +130,10 @@
       </el-button>
     </div>
 
-
     <div class="page-column">
       <div class="goto-box">
         前往
-        <input class="goto-input" type="number" v-model="gotoPage" min="1" />
+        <input class="goto-input" type="number" v-model.number="gotoPage" min="1" />
         页，共 {{ totalPages }} 页
       </div>
       <div class="page-box" @click="prevPage">
@@ -140,9 +147,8 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref,onMounted,computed,watch,nextTick } from 'vue';
+import { ref,onMounted,computed,watch,nextTick,onUnmounted } from 'vue';
 import { ElTable, ElTableColumn,ElMessage,ElMessageBox } from 'element-plus';
 import { Search,ArrowLeft,ArrowRight,Delete, Loading } from '@element-plus/icons-vue';
 import axios from 'axios';  
@@ -153,7 +159,7 @@ const searchForm = ref({
   patientAge: null,
   keyword: '',
   diagnosis: '',
-  createdAt: ''
+  dateRange: [] // [开始时间, 结束时间]
 });
 
 const tableData = ref([]);
@@ -170,17 +176,17 @@ const tableRef = ref(null)
 //指定删除
 const showSpecifyDeleteDialog = ref(false)
 const deleteForm = ref({
+  patientName: '',
   patientGender: '',
   patientAge: null,
   keyword: '',
   diagnosis: '',
-  createdAt: ''
-})
+  dateRange: []
+});
 
 const handleSelectionChange = (val) => {
   multipleSelection.value = val
 }
-
 
 // 分页方法
 const prevPage = () => {
@@ -204,7 +210,6 @@ watch(gotoPage, (newVal) => {
   }
 })
 
-
 const getImageSrc = (row, type) => 
   `data:${row[`image${type}Type`]};base64,${row[`image${type}`]}`
 
@@ -219,7 +224,12 @@ const loadData = async () => {
       size: pageSize.value,
     };
 
-    // 清除空字段
+    if (params.dateRange && params.dateRange.length === 2) {
+      params.queryStart = params.dateRange[0];
+      params.queryEnd = params.dateRange[1];
+    }
+    delete params.dateRange;
+
     Object.keys(params).forEach(key => {
       if (params[key] === '' || params[key] === null) {
         delete params[key];
@@ -237,8 +247,6 @@ const loadData = async () => {
   }
 };
 
-
-
 const resetSearch = () => {
   searchForm.value = {
     patientName: '',
@@ -254,7 +262,6 @@ const resetSearch = () => {
 //单独删除
 const handleDelete = async (id) => {
   try {
-    // 确认对话框
     await ElMessageBox.confirm(
       `确定删除记录 ${id} 吗？此操作不可恢复。`,
       '警告',
@@ -265,12 +272,10 @@ const handleDelete = async (id) => {
       }
     )
     
-    // 发送删除请求
     await axios.delete(`http://localhost:8080/info/${id}`)
     
-    // 删除成功提示
     ElMessage.success('删除成功')
-    loadData() // 删除后重新加载数据
+    loadData()
   } catch (error) {
     console.error('删除记录失败', error)
     ElMessage.error('删除记录失败')
@@ -280,13 +285,10 @@ const handleDelete = async (id) => {
 const BatchDeleteButton = () => {
   isBatchMode.value = !isBatchMode.value
   multipleSelection.value = []
-
-  // 清空表格选中项（下一帧 DOM 更新后执行）
   nextTick(() => {
     tableRef.value?.clearSelection()
   })
 }
-
 
 const isDeleting = ref(false)
 //批量删除
@@ -297,7 +299,6 @@ const handleBatchDelete = async () => {
   }
 
   try {
-    // 弹窗确认
     await ElMessageBox.confirm(
       '确认删除所选记录？此操作无法撤销！',
       '警告',
@@ -310,7 +311,6 @@ const handleBatchDelete = async () => {
 
     isDeleting.value = true;
 
-    // 遍历发送多个删除请求
     for (const item of multipleSelection.value) {
       const res = await axios.delete(`http://localhost:8080/info/${item.id}`);
       if (res.data !== '删除记录成功') {
@@ -319,9 +319,7 @@ const handleBatchDelete = async () => {
     }
 
     ElMessage.success('批量删除成功');
-
-    // 删除成功后刷新表格数据（根据你的实现来）
-    loadData(); // 你已有的方法
+    loadData();
     isBatchMode.value = false;
     multipleSelection.value = [];
 
@@ -351,6 +349,13 @@ const submitSpecifyDelete = async () => {
     )
 
     const payload = { ...deleteForm.value };
+
+    if (payload.dateRange && payload.dateRange.length === 2) {
+      payload.queryStart = payload.dateRange[0];
+      payload.queryEnd = payload.dateRange[1];
+    }
+    delete payload.dateRange;
+
     for (const key in payload) {
       if (payload[key] === '') {
         payload[key] = null;
@@ -365,7 +370,7 @@ const submitSpecifyDelete = async () => {
 
     ElMessage.success('删除成功')
     showSpecifyDeleteDialog.value = false
-    loadData() // 重新加载表格
+    loadData()
   } catch (err) {
     if (err !== 'cancel') {
       console.error('删除失败', err)
@@ -374,7 +379,14 @@ const submitSpecifyDelete = async () => {
   }
 }
 
-// 初始化加载
+// 图片预览打开时锁定滚动，关闭时解锁
+const onPreviewOpen = () => {
+  document.body.classList.add('image-viewer-open');
+};
+const onPreviewClose = () => {
+  document.body.classList.remove('image-viewer-open');
+};
+
 onMounted(loadData)
 </script>
 
@@ -487,6 +499,30 @@ onMounted(loadData)
   color: #000000;
   cursor: default;
 }
+</style>
 
+<style>
+/* 提升图片预览层级，确保在所有元素上方 */
+.el-image-viewer__wrapper {
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+}
 
+/* 遮罩层阻止点击事件穿透到下层表格 */
+.el-image-viewer__mask {
+  background-color: rgba(0,0,0,0.7) !important;
+  pointer-events: auto !important;
+}
+
+/* 预览时禁止页面滚动和操作 */
+body.image-viewer-open {
+  overflow: hidden !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 允许图片预览区域可操作 */
+body.image-viewer-open .el-image-viewer__wrapper {
+  pointer-events: auto !important;
+}
 </style>
