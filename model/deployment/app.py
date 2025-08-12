@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # 新增
 import os
 from predict import predict
 
 app = Flask(__name__)
+CORS(app)  # 新增：允许所有来源跨域请求
+
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

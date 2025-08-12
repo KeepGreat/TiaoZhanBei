@@ -148,17 +148,20 @@ const handleRecognition = async () => {
         background: 'rgba(0, 0, 0, 0.7)'
     });
 
-    const formData = new FormData();
-    formData.append('patientAge', form.value.patientAge);
-    formData.append('patientGender', form.value.patientGender);
-    formData.append('naturalLightImage', form.value.naturalLightImage);
-    formData.append('woodLampImage', form.value.woodLampImage);
-
     try {
-        // 1. 生成诊断结果文本
-        const diagnosisText = `白癜风可能性: ${Math.floor(Math.random() * 40 + 60)}%\n` +
-                            `建议: ${['定期观察', '进一步检查', '药物治疗'][Math.floor(Math.random() * 3)]}\n` +
-                            `特征分析: ${['边缘清晰', '色素脱失', '毛细血管扩张'][Math.floor(Math.random() * 3)]}`;
+        const formData = new FormData();
+        formData.append('file', form.value.woodLampImage);
+
+        const response = await axios.post('http://localhost:5000/predict', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+        });
+
+        // 返回结果示例: { '置信度': 0.5227611660957336, '预测类型': 'Stable' }
+        const data = response.data;
+        const diagnosisText = `${data['预测类型']} ${(data['置信度'] * 100).toFixed(2)}%`;
+
         
         // 2. 提取图片的 Base64 数据和类型（从预览 URL 中）
         const image1Base64 = naturalLightImageUrl.value.split(',')[1];
@@ -177,7 +180,8 @@ const handleRecognition = async () => {
         };
         
         // 4. 同时更新页面显示用的 recognitionResult
-        recognitionResult.value = diagnosisText;
+        const showDiagnosisText = `预测结果：${data['预测类型']} 置信度：${(data['置信度'] * 100).toFixed(2)}%`;
+        recognitionResult.value = showDiagnosisText;
         
         ElMessage.success('识别成功');
     } catch (error) {
