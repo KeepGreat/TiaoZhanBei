@@ -11,8 +11,8 @@
             </el-form-item>
             <el-form-item label="病人性别">
                 <el-radio-group v-model="form.patientGender">
-                    <el-radio label="男">男</el-radio>
-                    <el-radio label="女">女</el-radio>
+                    <el-radio :value="'男'">男</el-radio>  
+                    <el-radio :value="'女'">女</el-radio>
                 </el-radio-group>
             </el-form-item>
         </el-form>
@@ -155,15 +155,30 @@ const handleRecognition = async () => {
     formData.append('woodLampImage', form.value.woodLampImage);
 
     try {
-
-        // 模拟识别结果，测试显示
-        const mockResult = {
-            result: `白癜风可能性: ${Math.floor(Math.random() * 40 + 60)}%\n` +
-                `建议: ${['定期观察', '进一步检查', '药物治疗'][Math.floor(Math.random() * 3)]}\n` +
-                `特征分析: ${['边缘清晰', '色素脱失', '毛细血管扩张'][Math.floor(Math.random() * 3)]}`
+        // 1. 生成诊断结果文本
+        const diagnosisText = `白癜风可能性: ${Math.floor(Math.random() * 40 + 60)}%\n` +
+                            `建议: ${['定期观察', '进一步检查', '药物治疗'][Math.floor(Math.random() * 3)]}\n` +
+                            `特征分析: ${['边缘清晰', '色素脱失', '毛细血管扩张'][Math.floor(Math.random() * 3)]}`;
+        
+        // 2. 提取图片的 Base64 数据和类型（从预览 URL 中）
+        const image1Base64 = naturalLightImageUrl.value.split(',')[1];
+        const image1Type = form.value.naturalLightImage.type;
+        const image2Base64 = woodLampImageUrl.value.split(',')[1];
+        const image2Type = form.value.woodLampImage.type;
+        
+        // 3. 完整保存结果到 form.value.recognitionResult
+        form.value.recognitionResult = {
+            diagnosis: diagnosisText,
+            image1: image1Base64,
+            image1Type: image1Type,
+            image2: image2Base64,
+            image2Type: image2Type,
+            createdAt: new Date().toISOString().slice(0, 19) // 符合格式的时间
         };
-
-        recognitionResult.value = mockResult.result;
+        
+        // 4. 同时更新页面显示用的 recognitionResult
+        recognitionResult.value = diagnosisText;
+        
         ElMessage.success('识别成功');
     } catch (error) {
         console.error('图像识别失败:', error);
@@ -181,12 +196,27 @@ const handleUploadResult = async () => {
     }
 
     try {
-        const data = {
+        const requestData = {
+            // 病人基本信息
+            patientName: form.value.patientName,
             patientAge: form.value.patientAge,
             patientGender: form.value.patientGender,
-            prediction: recognitionResult.value
+            keyword: form.value.keyword || '皮肤检查',
+            
+            // 识别结果信息
+            diagnosis: form.value.recognitionResult.diagnosis,
+            
+            // 图像信息（Base64格式）
+            image1: form.value.recognitionResult.image1,
+            image1Type: form.value.recognitionResult.image1Type,
+            image2: form.value.recognitionResult.image2,
+            image2Type: form.value.recognitionResult.image2Type,
+            
+            // 创建时间
+            createdAt: form.value.recognitionResult.createdAt
         };
-        const response = await axios.post('http://localhost:8080/image/saveResult', data);
+        
+        const response = await axios.post('http://localhost:8080/info', requestData);
         if (response.data === '保存成功') {
             ElMessage.success('结果保存成功');
         } else {

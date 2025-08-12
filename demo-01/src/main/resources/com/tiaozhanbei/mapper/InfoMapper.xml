@@ -109,7 +109,7 @@
 <!--    @Param("keyword") String keyword, @Param("diagnosis") String diagnosis,-->
 <!--    @Param("queryStart") LocalDateTime queryStart, @Param("queryEnd") LocalDateTime queryEnd);-->
     <select id="selectPageInfo" resultType="info">
-        SELECT id, patient_gender, patient_age, keyword, diagnosis, created_at FROM `info`
+        SELECT id,patient_name, patient_gender, patient_age, keyword, diagnosis, created_at FROM `info`
         <where>
             <if test="gender != null">
                 AND patient_gender = #{gender}
