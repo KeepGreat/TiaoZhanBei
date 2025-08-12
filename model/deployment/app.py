@@ -3,6 +3,7 @@ import os
 from predict import predict
 
 app = Flask(__name__)
+CORS(app)
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
